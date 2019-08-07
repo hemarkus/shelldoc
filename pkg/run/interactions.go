@@ -2,8 +2,10 @@ package run
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"math"
+	"os"
 	"strings"
 	"time"
 
@@ -37,7 +39,7 @@ func result(code int) string {
 	}
 }
 
-func (context *Context) performInteractions(inputfile string) (*junitxml.JUnitTestSuite, error) {
+func (context *Context) performInteractions(inputfile string, logSteps bool) (*junitxml.JUnitTestSuite, error) {
 	// the test suite object for this file
 	suite := &junitxml.JUnitTestSuite{Name: inputfile}
 	suite.AddProperty("shelldoc-version", version.Version())
@@ -87,6 +89,24 @@ func (context *Context) performInteractions(inputfile string) (*junitxml.JUnitTe
 		} else {
 			testcase.Classname = inputfile // testcase is always returned, even if err is not nil
 		}
+
+		// log steps
+		if true {
+			logfile, err := os.Create(fmt.Sprintf("%d.log", index+1))
+			if err != nil {
+				return nil, err
+			}
+			defer logfile.Close()
+
+			for _, line := range interaction.Output {
+				_, err = io.WriteString(logfile, fmt.Sprintf("%s\n", line))
+				if err != nil {
+					return nil, err
+				}
+
+			}
+		}
+
 		if err != nil {
 			fmt.Printf(" --  ERROR: %v", err)
 			context.RegisterReturnCode(returnError)

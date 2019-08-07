@@ -26,7 +26,7 @@ func TestHelloWorld(t *testing.T) {
 	context := Context{
 		Verbose: true,
 	}
-	testsuite, err := context.performInteractions("../../pkg/tokenizer/samples/helloworld.md")
+	testsuite, err := context.performInteractions("../../pkg/tokenizer/samples/helloworld.md", false)
 	require.NoError(t, err, "The HelloWorld example should execute without errors.")
 	require.Equal(t, returnSuccess, context.ReturnCode(), "The expected return code is returnSuccess.")
 	require.Equal(t, 4, testsuite.SuccessCount(), "There are three successful tests in the sample.")
@@ -34,7 +34,7 @@ func TestHelloWorld(t *testing.T) {
 
 func TestHFailNoMatch(t *testing.T) {
 	context := Context{}
-	testsuite, err := context.performInteractions("../../pkg/tokenizer/samples/failnomatch.md")
+	testsuite, err := context.performInteractions("../../pkg/tokenizer/samples/failnomatch.md", false)
 	require.NoError(t, err, "The failnomatch example should fail with a mismatch.")
 	require.Equal(t, returnFailure, context.ReturnCode(), "The expected return code is returnFailure.")
 	require.Equal(t, 1, testsuite.FailureCount(), "There is one failing test in the sample.")
@@ -42,7 +42,7 @@ func TestHFailNoMatch(t *testing.T) {
 
 func TestExitCodesOptions(t *testing.T) {
 	context := Context{}
-	_, err := context.performInteractions("../../pkg/tokenizer/samples/options.md")
+	_, err := context.performInteractions("../../pkg/tokenizer/samples/options.md", false)
 	require.NoError(t, err, "The HelloWorld example should execute without errors.")
 	require.Equal(t, returnSuccess, context.ReturnCode(), "The expected return code is returnSuccess.")
 }

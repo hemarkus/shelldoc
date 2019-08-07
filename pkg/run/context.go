@@ -18,6 +18,7 @@ type Context struct {
 	Files         []string
 	// output variables
 	Suites     junitxml.JUnitTestSuites
+	LogSteps   bool
 	returnCode int
 }
 
@@ -50,7 +51,7 @@ func (context *Context) WriteXML() error {
 func (context *Context) ExecuteFiles() int {
 	context.RegisterReturnCode(returnSuccess)
 	for _, file := range context.Files {
-		suite, err := context.performInteractions(file)
+		suite, err := context.performInteractions(file, context.LogSteps)
 		if err != nil {
 			fmt.Println(err) // log may be disabled (see "verbose")
 			os.Exit(returnError)

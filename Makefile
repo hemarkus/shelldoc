@@ -13,5 +13,5 @@ test:
 
 selftest			: build
 	@echo "Running self-test of README.md and evaluating XML output with xmllint..." && \
-		./cmd/shelldoc/shelldoc run -x results.xml README.md && \
+		./cmd/shelldoc/shelldoc run -l -x results.xml README.md && \
 		xmllint --noout --schema pkg/junitxml/jenkins-junit.xsd results.xml
