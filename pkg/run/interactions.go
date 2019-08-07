@@ -92,7 +92,7 @@ func (context *Context) performInteractions(inputfile string, logSteps bool) (*j
 
 		// log steps
 		if true {
-			logfile, err := os.Create(fmt.Sprintf("%d.log", index+1))
+			logfile, err := os.Create(fmt.Sprintf("%s-%d.log", inputfile, index+1))
 			if err != nil {
 				return nil, err
 			}
