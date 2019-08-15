@@ -21,6 +21,7 @@ type Shell struct {
 	cmd    *exec.Cmd
 	stdin  io.WriteCloser
 	stdout io.ReadCloser
+	stderr io.ReadCloser
 }
 
 // DetectShell returns the path to the selected shell or the content of $SHELL
@@ -50,11 +51,15 @@ func StartShell(shell string) (Shell, error) {
 	if err != nil {
 		return Shell{}, fmt.Errorf("Unable to set up output stream for shell %s: %v", shell, err)
 	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return Shell{}, fmt.Errorf("Unable to set up error stream for shell %s: %v", shell, err)
+	}
 	err = cmd.Start()
 	if err != nil {
 		return Shell{}, fmt.Errorf("Unable to start shell %s: %v", shell, err)
 	}
-	return Shell{cmd, stdin, stdout}, nil
+	return Shell{cmd, stdin, stdout, stderr}, nil
 }
 
 // ExecuteCommand runs a command in the shell and returns its output and exit code
@@ -76,7 +81,8 @@ func (shell *Shell) ExecuteCommand(command string) ([]string, int, error) {
 	var output []string
 	var rc int
 	beginFound := false
-	scanner := bufio.NewScanner(shell.stdout)
+	combinedOut := io.MultiReader(shell.stdout, shell.stderr)
+	scanner := bufio.NewScanner(combinedOut)
 	for scanner.Scan() {
 		line := scanner.Text()
 		if beginRx.MatchString(line) {
